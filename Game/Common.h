@@ -30,7 +30,7 @@ protected:
 		GAME = CHESS,
 		ST_SYS = IMPERF_INFO,//ST
 		//------------------------------Tests
-		TEST1 = true,
+		TEST1 = false,
 		TEST2 = false,
 		TEST3 = false,//ST2
 		//------------------------------ST2 Print
