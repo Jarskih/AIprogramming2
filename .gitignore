@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+.vs/*
+Game/Release/*
+Game/Debug/*
+Debug/*
+Backup/*
