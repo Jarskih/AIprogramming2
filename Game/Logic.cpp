@@ -606,7 +606,7 @@ bool Logic::King_IsInCheck(int ply) {
 	{
 		const char opponentP = mIsWhite ? 'p' : 'P';
 		{
-			// Left side
+			// ↘ && ↗
 			const int pawnPosX = mIsWhite ? mKingPos[0] + 1 : mKingPos[0] - 1;
 			const int pawnPosY = mIsWhite ? mKingPos[1] + 1 : mKingPos[1] - 1;
 			if (MoveStatus(pawnPosX, pawnPosY, ply) == 2 && opponentP == mGamePos[ply].sq[pawnPosX][pawnPosY]) {
@@ -614,7 +614,7 @@ bool Logic::King_IsInCheck(int ply) {
 			}
 		}
 		{
-			// Right side
+			// ↖ & ↙
 			const int pawnPosX = mIsWhite ? mKingPos[0] - 1 : mKingPos[0] + 1;
 			const int pawnPosY = mIsWhite ? mKingPos[1] + 1 : mKingPos[1] - 1;
 			if (MoveStatus(pawnPosX, pawnPosY, ply) == 2 && opponentP == mGamePos[ply].sq[pawnPosX][pawnPosY]) {
@@ -626,9 +626,9 @@ bool Logic::King_IsInCheck(int ply) {
 	{
 		const char opponentK = mIsWhite ? 'k' : 'K';
 
-		for (int x = -1; x < 2; x++)
+		for (int x = -1; x <= 1; x++)
 		{
-			for (int y = -1; y < 2; y++)
+			for (int y = -1; y <= 1; y++)
 			{
 				if (x == 0 && y == 0)
 				{
@@ -662,7 +662,7 @@ bool Logic::King_IsInCheck(int ply) {
 		const int posX = mKingPos[0];
 		const int posY = mKingPos[1];
 		{
-			// UP
+			// ↑
 			for (int y = 1; posY + y < RANKS; y++)
 			{
 				int dy = posY + y;
@@ -677,7 +677,7 @@ bool Logic::King_IsInCheck(int ply) {
 			}
 		}
 		{
-			// DOWN
+			// ↓
 			for (int y = 1; posY - y >= 0; y++)
 			{
 				int dy = posY - y;
@@ -694,7 +694,7 @@ bool Logic::King_IsInCheck(int ply) {
 			}
 		}
 		{
-			// LEFT
+			// ←
 			for (int x = 1; posX - x >= 0; x++)
 			{
 				int dx = posX - x;
@@ -710,7 +710,7 @@ bool Logic::King_IsInCheck(int ply) {
 			}
 		}
 		{
-			// RIGHT
+			// →
 			for (int x = 1; posX + x < FILES; x++)
 			{
 				int dx = posX + x;
@@ -729,7 +729,181 @@ bool Logic::King_IsInCheck(int ply) {
 
 	//   (E) return true if king is in diagonal check
 	//       (opponent's queen or bishop)
+
+	{
+		const char opponentQ = mIsWhite ? 'q' : 'Q';
+		const char opponentR = mIsWhite ? 'b' : 'B';
+
+		const int posX = mKingPos[0];
+		const int posY = mKingPos[1];
+
+		// ↗
+		{
+			for (int i = 1; posX + i < FILES && posY + i < RANKS; i++)
+			{
+				int dx = posX + i;
+				int dy = posY + i;
+
+				if (MoveStatus(dx, dy, ply) != 1)
+				{
+					if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentQ || mGamePos[ply].sq[dx][dy] == opponentR)
+					{
+						return true;
+					}
+					break;
+				}
+			}
+		}
+		// ↘
+		{
+			for (int i = 1; posX + i < FILES && posY - i >= 0; i++)
+			{
+				int dx = posX + i;
+				int dy = posY - i;
+
+				if (MoveStatus(dx, dy, ply) != 1)
+				{
+					if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentQ || mGamePos[ply].sq[dx][dy] == opponentR)
+					{
+						return true;
+					}
+					break;
+				}
+			}
+		}
+		// ↙
+		{
+			for (int i = 1; posX - i >= 0 && posY - i >= 0; i++)
+			{
+				int dx = posX - i;
+				int dy = posY - i;
+
+				if (MoveStatus(dx, dy, ply) != 1)
+				{
+					if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentQ || mGamePos[ply].sq[dx][dy] == opponentR)
+					{
+						return true;
+					}
+					break;
+				}
+			}
+		}
+		// ↖
+		{
+			for (int i = 1; posX - i >= 0 && posY + i < RANKS; i++)
+			{
+				int dx = posX - i;
+				int dy = posY + i;
+
+				if (MoveStatus(dx, dy, ply) != 1)
+				{
+					if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentQ || mGamePos[ply].sq[dx][dy] == opponentR)
+					{
+						return true;
+					}
+					break;
+				}
+			}
+		}
+	}
+
 	//   (F) return true if king is in check by opponent's knight
+
+	{
+		const char opponentN = mIsWhite ? 'n' : 'N';
+
+		const int posX = mKingPos[0];
+		const int posY = mKingPos[1];
+
+		// _
+		//  |_
+		{
+			int dx = posX + 2;
+			int dy = posY - 1;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		{
+			int dx = posX - 2;
+			int dy = posY + 1;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		//	 _
+		// _|
+		{
+			int dx = posX + 2;
+			int dy = posY + 1;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		{
+			int dx = posX - 2;
+			int dy = posY - 1;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		// |_
+		//   |
+		{
+			int dx = posX - 1;
+			int dy = posY + 2;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		{
+			int dx = posX + 1;
+			int dy = posY - 2;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		//  _|
+		// |
+		{
+			int dx = posX + 1;
+			int dy = posY + 2;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+
+		{
+			int dx = posX - 1;
+			int dy = posY - 2;
+
+			if (MoveStatus(dx, dy, ply) == 2 && mGamePos[ply].sq[dx][dy] == opponentN)
+			{
+				return true;
+			}
+		}
+	}
+
 	//   (G) return false
 	return false;
 }
