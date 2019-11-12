@@ -1295,6 +1295,41 @@ void Logic::ST_NewPreSet_GamePos_Start(bool isWhite) {
 	//Use ST_Init(...) as a template; look at: Piece Position and
 	//Square Values in ST_Init for guidance..
 
+	//------------------------------Start Game Position
+	const char START1[][20] = {
+		"f c e g d d l a l c",
+		"c f l f e d g l d g",
+		"c h d j e i e b c i",
+		"h c h g l c f k c l",
+		"* * * * * * * * * *",
+		"* * * * * * * * * *",
+		"L C K F C L G H C H",
+		"I C B E I E J D H C",
+		"G D L G D E F L F C",
+		"C L A L D D G E C F",
+	};
+
+
+
+	//------------------------------
+	//   x, y : coordinates used locally in this class
+	//   
+	//   Ranks y : 0-9
+	//   ^
+	//   |
+	//   |
+	//   *-----> Files x : 0-9
+	//   
+	//   mGamePos[ply].sq[x][y]
+	//------------------------------Square Values
+	For(x, FILES) mFileGrad[x] = 0.;
+	For(y, RANKS) mRankGrad[y] = mOffensiveFactor * (float(y) - 4.5);
+	//------------------------------
+	For(x, FILES) For(y, RANKS) {
+		mGamePos[0].sq[x][y] = START[RANKS_1 - y][2 * x];
+		mGamePosStatus[0].sq[x][y] = SEALED;
+	}
+
 }
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
@@ -1302,9 +1337,16 @@ void Logic::ST_ShufflePiecePos(int fromY, int toY) {
 
 	//Implement ST_ShufflePiecePos(...)
 	//
-	//(A) Choose two random squares between fromY to toY.
-	//(B) Swap the pieces
-	//(C) Reapet (A)-(B) 1000 times...
+	For(i, 1000)
+	{
+		//(A) Choose two random squares between fromY to toY.
+		int posX1 = 10.*.5*(1. + Rand());
+		int posX2 = 10.*.5*(1. + Rand());
+
+		//(B) Swap the pieces
+
+	}
+	//(C) Repeat (A)-(B) 1000 times...
 	//
 	//Recommendation:
 	//int posX1 = 10.*.5*(1.+Rand()) gives for instance an integer

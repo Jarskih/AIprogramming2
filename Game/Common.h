@@ -27,7 +27,7 @@ protected:
 	static const int
 		MAX_PLY = 4096,
 		CORE_ENGINE = OPTIM,
-		GAME = CHESS,
+		GAME = STRATEGO,
 		ST_SYS = IMPERF_INFO,//ST
 		//------------------------------Tests
 		TEST1 = false,
